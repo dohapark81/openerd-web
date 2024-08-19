@@ -4,15 +4,18 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "test": "vitest",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "-": "^0.0.1",
     "@types/react-router-dom": "^5.3.3",
     "@xyflow/react": "^12.1.0",
     "axios": "^1.7.4",
+    "hcl-parser": "^0.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.1"
@@ -28,6 +31,7 @@
     "globals": "^15.9.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vitest": "^2.0.5"
   }
 }
