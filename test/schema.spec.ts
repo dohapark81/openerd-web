@@ -1,19 +1,17 @@
 import { expect, test } from 'vitest';
-import {Schema, Table} from "../src/types/schema";
+import {Schema, Table, Document} from "../src/types/schema";
 
 const schema: Schema = {
-  name: "myapp",
   charset: "utf8mb4",
   collate: "utf8mb4_unicode_ci",
   comment: "Stores user account information"
 };
 
 const usersTable: Table = {
-  schema: schema,
-  name: "users",
+  schema: 'userdb',
   charset: "utf8mb4",
   collate: "utf8mb4_unicode_ci",
-  columns: {
+  column: {
     id: {
       type: "bigint",
       unsigned: true,
@@ -64,10 +62,10 @@ const usersTable: Table = {
       null: false
     }
   },
-  primaryKeys: {
+  primary_key: {
     columns: ["id"]
   },
-  indexes: {
+  index: {
     idx_username: {
       columns: ["username"],
       unique: true
@@ -81,6 +79,16 @@ const usersTable: Table = {
   comment: "Stores user account information"
 };
 
+const document: Document = {
+  schema: {
+    userdb: schema,
+    grafana: {}
+  },
+  table: {
+    users: usersTable
+  }
+};
+
 test('test', () => {
-    console.log(usersTable.columns)
+  console.log(document);
 });
