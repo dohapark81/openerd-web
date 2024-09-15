@@ -9,6 +9,8 @@ const schema: Schema = {
 
 const usersTable: Table = {
   schema: 'userdb',
+  name: 'users',
+  logical_name: 'Users',
   charset: "utf8mb4",
   collate: "utf8mb4_unicode_ci",
   column: {

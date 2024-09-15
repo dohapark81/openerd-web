@@ -36,6 +36,8 @@
    * 테이블
    */
   export interface Table {
+    name: string;
+    logical_name: string;
     schema: string | Schema;
     charset: string;
     collate: string;

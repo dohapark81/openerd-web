@@ -1,10 +1,9 @@
-import ERDComponent from './components/ERDCanvas';
+import EditorPage from './pages/editor-page';
 
 function App() {
   return (
     <div className="App">
-      <h1>My ERD Designer</h1>
-      <ERDComponent />
+      <EditorPage />
     </div>
   );
 }

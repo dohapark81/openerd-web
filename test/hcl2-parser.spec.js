@@ -43,6 +43,7 @@ const hcl2 = `
   }
 `;
 
+
 test('hcl parser test', () => {
     const result = parser.parseToObject(hcl);
     console.log(JSON.stringify(result, null, 2));
