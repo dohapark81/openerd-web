@@ -3,6 +3,14 @@
    */
   export interface Column {
     /**
+     * 물리적 이름
+     */
+    name: string;
+    /**
+     * 논리적 이름
+     */
+    logical_name?: string;
+    /**
      * 타입 (int, varchar, text, timestamp ...)
      */
     type: string;
@@ -41,9 +49,7 @@
     schema: string | Schema;
     charset: string;
     collate: string;
-    column: {
-      [key: string]: Column;
-    };
+    columns: Column[];
     primary_key?: {
       columns: string[];
     };

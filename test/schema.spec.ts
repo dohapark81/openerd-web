@@ -13,57 +13,68 @@ const usersTable: Table = {
   logical_name: 'Users',
   charset: "utf8mb4",
   collate: "utf8mb4_unicode_ci",
-  column: {
-    id: {
+  columns: [
+    {
+      name: "id",
       type: "bigint",
       unsigned: true,
       auto_increment: true,
       null: false
     },
-    username: {
+    {
+      name: "username",
       type: "varchar(50)",
       null: false
     },
-    email: {
+    {
+      name: "email",
       type: "varchar(255)",
       null: false
     },
-    password_hash: {
+    {
+      name: "password_hash",
       type: "varchar(255)",
       null: false
     },
-    first_name: {
+    {
+      name: "first_name",
       type: "varchar(50)",
       null: true
     },
-    last_name: {
+    {
+      name: "last_name",
       type: "varchar(50)",
       null: true
     },
-    date_of_birth: {
+    {
+      name: "date_of_birth",
       type: "date",
       null: true
     },
-    created_at: {
+    {
+      name: "created_at",
       type: "timestamp",
       default: "CURRENT_TIMESTAMP",
       null: false
     },
-    updated_at: {
+    {
+      name: "updated_at",
       type: "timestamp",
       default: "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
       null: false
     },
-    last_login: {
+    {
+      name: "last_login",
       type: "timestamp",
       null: true
     },
-    is_active: {
+    {
+      name: "is_active",
       type: "boolean",
       default: true,
       null: false
     }
-  },
+  ],
   primary_key: {
     columns: ["id"]
   },
