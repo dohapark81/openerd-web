@@ -152,11 +152,10 @@ export default function Canvas() {
   useEffect(() => {
     const newNodes = tables.map((table, index) => ({
       id: table.name,
-      type: 'entity',
       data: {
         label: <Node table={table} />
       },
-      position: { x: 250, y: 200*index },
+      position: { x: 10, y: 250*index+10 },
       style: entityNodeStyle,
     }));
 
