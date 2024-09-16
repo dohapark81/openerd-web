@@ -1,13 +1,13 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
-const EditableField = ({ value, onSave }) => {
+const EditableField = ({ value, onSave }: { value: string, onSave: (value: string) => void }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [fieldValue, setFieldValue] = useState(value);
   const inputRef = useRef(null);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
-      inputRef.current.focus();
+      (inputRef.current as HTMLInputElement).focus();
     }
   }, [isEditing]);
 
@@ -15,7 +15,7 @@ const EditableField = ({ value, onSave }) => {
     setIsEditing(true);
   }, []);
 
-  const handleChange = useCallback((event) => {
+  const handleChange = useCallback((event: any) => {
     setFieldValue(event.target.value);
   }, []);
 
@@ -24,7 +24,7 @@ const EditableField = ({ value, onSave }) => {
     onSave(fieldValue);
   }, [fieldValue, onSave]);
 
-  const handleKeyDown = useCallback((event) => {
+  const handleKeyDown = useCallback((event: any) => {
     if (event.key === 'Enter') {
       handleBlur();
     } else if (event.key === 'Escape') {
