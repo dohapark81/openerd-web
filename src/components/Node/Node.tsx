@@ -1,23 +1,27 @@
 import { Table } from "../../types/schema";
-import EditableField from "../../components/EditableField";
 
-export default function Node({ table }: { table: Table }) {
+interface NodeProps {
+  table: Table;
+  onClick?: (table: Table) => void;
+}
+
+export default function Node({ table, onClick }: NodeProps) {
 
   const handleClick = () => {
-    alert('clicked');
-  }
-
-  const handleSave = (value: string) => {
-    console.log(value);
+    if (onClick) {
+      onClick(table);
+    }
   }
 
   return (
-    <>
-      <span onClick={handleClick} style={{fontSize: '2.0em'}}><strong>{table.logical_name} ({table.name})</strong></span>      
+    <div onClick={handleClick} >
+      <span style={{fontSize: '2.0em'}}><strong>{table.logical_name} ({table.name})</strong></span>      
       <hr />
       {table.columns.map((column) => (
-        <EditableField key={column.name} value={column.name + ' ' + column.type} onSave={handleSave} />
+        <span key={column.name}>
+          {column.name} {column.type} {column.logical_name}
+        </span>
       ))}
-    </>
+    </div>
   );
 }
