@@ -1,4 +1,4 @@
-import { Table } from "../../types/schema";
+import { Table } from "@/types/schema";
 
 interface NodeProps {
   table: Table;
@@ -18,9 +18,12 @@ export default function Node({ table, onClick }: NodeProps) {
       <span style={{fontSize: '2.0em'}}><strong>{table.logical_name} ({table.name})</strong></span>      
       <hr />
       {table.columns.map((column) => (
-        <span key={column.name}>
-          {column.name} {column.type} {column.logical_name}
-        </span>
+        <div key={column.name}>
+          <span>
+            {column.name} {column.type} {column.logical_name}
+          </span>
+          <br />
+        </div>
       ))}
     </div>
   );

@@ -11,8 +11,8 @@ import {
   MarkerType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import {Table} from "../../types/schema";
-import Node from '../Node';
+import {Table} from "@/types/schema";
+import Node from '@/components/Node';
 
 const entityNodeStyle = {
   padding: 10,

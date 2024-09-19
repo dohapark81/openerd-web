@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import Canvas from '../components/Canvas';
-import Drawer from '../components/Drawer';
-import { Table } from '../types/schema';
+import Canvas from '@/components/Canvas';
+import Drawer from '@/components/Drawer';
+import { Table } from '@/types/schema';
 
 export default function EditorPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
