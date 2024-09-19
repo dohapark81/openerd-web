@@ -11,6 +11,10 @@
      */
     logical_name?: string;
     /**
+     * 기본 키 여부
+     */
+    primary_key: boolean;
+    /**
      * 타입 (int, varchar, text, timestamp ...)
      */
     type: string;

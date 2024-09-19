@@ -1,6 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 
-const EditableField = ({ value, onSave }: { value: string, onSave: (value: string) => void }) => {
+interface EditableFieldProps {
+  value: string;
+  onSave: (value: string) => void;
+}
+
+const EditableField = ({ value, onSave }: EditableFieldProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [fieldValue, setFieldValue] = useState(value);
   const inputRef = useRef(null);

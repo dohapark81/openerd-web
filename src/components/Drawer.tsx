@@ -8,7 +8,7 @@ interface DrawerProps {
   onClose: () => void;
   minWidth?: number;
   maxWidth?: number;
-  title: string;
+  title?: React.ReactNode;
   description?: string;
 }
 
@@ -21,7 +21,7 @@ const Drawer: React.FC<DrawerProps> = ({
   title,
   description,
 }) => {
-  const [width, setWidth] = useState(500);
+  const [width, setWidth] = useState(700);
   const drawerRef = useRef<HTMLDivElement>(null);
   const resizeHandleRef = useRef<HTMLDivElement>(null);
 
@@ -58,8 +58,12 @@ const Drawer: React.FC<DrawerProps> = ({
     };
   }, [minWidth, maxWidth]);
 
+  const handleClickClose = () => {
+    onClose();
+  };
+
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog.Root open={isOpen} modal={true}>
       <Dialog.Portal>
         {/* <Dialog.Overlay className="fixed inset-0 bg-black/50" /> */}
         <Dialog.Content
@@ -80,7 +84,7 @@ const Drawer: React.FC<DrawerProps> = ({
                 className="absolute top-2 right-2 inline-flex items-center justify-center rounded-full w-8 h-8 focus:outline-none"
                 aria-label="Close"
               >
-                <Cross2Icon />
+                <Cross2Icon onClick={handleClickClose} />
               </button>
             </Dialog.Close>
             <h2 className="text-lg font-semibold mb-4">{title}</h2>

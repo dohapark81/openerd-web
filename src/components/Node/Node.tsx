@@ -14,12 +14,12 @@ export default function Node({ table, onClick }: NodeProps) {
   }
 
   return (
-    <div onClick={handleClick} >
-      <span style={{fontSize: '2.0em'}}><strong>{table.logical_name} ({table.name})</strong></span>      
+    <div onClick={handleClick}>
+      <span style={{fontSize: '2.0em', color: 'white'}}><strong>{table.logical_name} ({table.name})</strong></span>      
       <hr />
       {table.columns.map((column) => (
         <div key={column.name}>
-          <span>
+          <span style={{color: 'white'}}>
             {column.name} {column.type} {column.logical_name}
           </span>
           <br />

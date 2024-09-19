@@ -71,94 +71,15 @@ const initialEdges = [
   },
 ];
 
-const tables = [
-  {
-    schema: 'userdb',
-    name: 'users',
-    logical_name: 'User',
-    charset: 'utf8mb4',
-    collate: 'utf8mb4_unicode_ci',
-    columns: [
-      {
-        name: 'id',
-        type: 'bigint',
-        unsigned: true,
-        auto_increment: true,
-        null: false
-      },
-      {
-        name: 'username',
-        type: 'varchar(50)',
-        null: false
-      },
-      {
-        name: 'email',
-        type: 'varchar(255)',
-        null: false
-      }
-    ],
-    index: {
-      idx_username: {
-        columns: ['username'],
-        unique: true
-      },
-      idx_email: {
-        columns: ['email'],
-        unique: true
-      }
-    },
-    engine: 'InnoDB',
-    comment: 'Stores user account information'
-  },
-  {
-    schema: 'userdb',
-    name: 'posts',
-    logical_name: 'Post',
-    charset: 'utf8mb4',
-    collate: 'utf8mb4_unicode_ci',
-    columns: [
-      {
-        name: 'id',
-        type: 'bigint',
-        unsigned: true,
-        auto_increment: true,
-        null: false
-      },
-      {
-        name: 'title',
-        type: 'varchar(50)',
-        null: false
-      },
-      {
-        name: 'content',
-        type: 'text',
-        null: false
-      },
-      {
-        name: 'author_id',
-        type: 'bigint',
-        unsigned: true,
-        null: false
-      }
-    ],
-    index: {
-      idx_username: {
-        columns: ['id'],
-        unique: true
-      }
-    },
-    engine: 'InnoDB',
-    comment: 'Stores user posts'
-  }
-] as Table[];
-
 interface CanvasProps {
+  tables: Table[];
   width: number;
   height: number;
   onClickNode?: (table: Table) => void;
+  onClickEdge?: (edge: any) => void;
 }
 
-export default function Canvas({ width, height, onClickNode }: CanvasProps) {
+export default function Canvas({ tables, width, height, onClickNode, onClickEdge }: CanvasProps) {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
@@ -193,6 +114,11 @@ export default function Canvas({ width, height, onClickNode }: CanvasProps) {
     (changes: any) => setEdges((eds) => addEdge(changes, eds)),
     []
   );
+  const onEdgeClick = useCallback((event: any, edge: any) => {
+    if (onClickEdge) {
+      onClickEdge(edge);
+    }
+  }, []);
 
   return (
     <div style={{ width: `${width}px`, height: `${height}px` }}>
@@ -201,6 +127,7 @@ export default function Canvas({ width, height, onClickNode }: CanvasProps) {
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onEdgeClick={onEdgeClick}
         onConnect={onConnect}
         fitView={false}
         proOptions={{
@@ -215,10 +142,6 @@ export default function Canvas({ width, height, onClickNode }: CanvasProps) {
           showInteractive={false}
           className="!shadow-none"
         >
-          <button
-            className="size-11 bg-pink-600 p-2 hover:bg-pink-500"
-          >
-          </button>
         </Controls>
         <MiniMap
           style={{
