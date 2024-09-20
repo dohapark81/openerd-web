@@ -80,9 +80,20 @@ const SchemaEditor: React.FC<SchemaEditorProps> = ({
     updateSchema(updatedColumns);
   }, [rowData]);
 
+  const generateUniqueColumnName = (baseName: string): string => {
+    let newName = baseName;
+    let counter = 1;
+    while (rowData.some(col => col.name === newName)) {
+      newName = `${baseName}${counter}`;
+      counter++;
+    }
+    return newName;
+  };
+
   const handleAddColumn = useCallback(() => {
+    const newColumnName = generateUniqueColumnName('New Column');
     const newColumn: Column = {
-      name: 'New Column',
+      name: newColumnName,
       logical_name: '',
       type: 'varchar',
       null: false,
@@ -123,6 +134,7 @@ const SchemaEditor: React.FC<SchemaEditorProps> = ({
     <div className="ag-theme-alpine" style={{ height: 500, width: '100%' }}>
       <Button onClick={handleAddColumn}>Add Column</Button>
       <AgGridReact
+        ref={gridRef}
         rowData={rowData}
         columnDefs={columnDefs}
         onCellValueChanged={onCellValueChanged}
