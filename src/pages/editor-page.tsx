@@ -7,7 +7,7 @@ import SchemaEditor from '@/components/SchemaEditor';
 import Button from '@/components/Button';
 import { Toolbar, ToolbarButton } from '@radix-ui/react-toolbar';
 import { MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, Menubar } from '@radix-ui/react-menubar';
-import { CursorArrowIcon, HandIcon, MagnifyingGlassIcon, PlusIcon, Pencil1Icon, TableIcon } from '@radix-ui/react-icons';
+import { CursorArrowIcon, HandIcon, MagnifyingGlassIcon, Pencil1Icon, TableIcon } from '@radix-ui/react-icons';
 
 const initialTables = [
   {

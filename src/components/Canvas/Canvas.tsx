@@ -54,7 +54,7 @@ export default function Canvas({ tables, width, height, controls, onClickNode, o
   }
 
   useEffect(() => {
-    const newNodes = tables.map((table, index) => ({
+    const newNodes = tables.map((table) => ({
       id: table.name,
       data: {
         label: <Node table={table} onClick={handleClickNode} />
