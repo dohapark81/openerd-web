@@ -43,6 +43,11 @@
     columns: string[];
     unique: boolean;
   }
+
+  export interface Position {
+    x: number;
+    y: number;
+  }
   
   /**
    * 테이블
@@ -65,6 +70,7 @@
     };
     engine: string;
     comment?: string;
+    position: Position;
   }
   
   /**

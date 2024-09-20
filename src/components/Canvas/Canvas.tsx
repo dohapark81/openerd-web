@@ -21,43 +21,6 @@ const entityNodeStyle = {
   backgroundColor: '#000',
 };
 
-const initialNodes = [
-  {
-    id: '1',
-    type: 'input',
-    data: { 
-      label: (
-        <>
-          <strong>User</strong>
-          <hr />
-          <div>id: int</div>
-          <div>username: varchar</div>
-          <div>email: varchar</div>
-        </>
-      )
-    },
-    position: { x: 250, y: 0 },
-    style: entityNodeStyle,
-  },
-  {
-    id: '2',
-    data: { 
-      label: (
-        <>
-          <strong>Post</strong>
-          <hr />
-          <div>id: int</div>
-          <div>title: varchar</div>
-          <div>content: text</div>
-          <div>user_id: int</div>
-        </>
-      )
-    },
-    position: { x: 250, y: 200 },
-    style: entityNodeStyle,
-  },
-];
-
 const initialEdges = [
   {
     id: 'e1-2',
@@ -81,7 +44,7 @@ interface CanvasProps {
 }
 
 export default function Canvas({ tables, width, height, controls, onClickNode, onClickEdge }: CanvasProps) {
-  const [nodes, setNodes] = useState(initialNodes);
+  const [nodes, setNodes] = useState<{ id: string; data: { label: JSX.Element }; position: { x: number; y: number }; style: { padding: number; border: string; borderRadius: string; backgroundColor: string } }[]>([]);
   const [edges, setEdges] = useState(initialEdges);
 
   const handleClickNode = (table: Table) => {
@@ -96,7 +59,7 @@ export default function Canvas({ tables, width, height, controls, onClickNode, o
       data: {
         label: <Node table={table} onClick={handleClickNode} />
       },
-      position: { x: 10, y: 250*index+10 },
+      position: table.position,
       style: entityNodeStyle,
     }));
 
@@ -115,11 +78,18 @@ export default function Canvas({ tables, width, height, controls, onClickNode, o
     (changes: any) => setEdges((eds) => addEdge(changes, eds)),
     []
   );
-  const onEdgeClick = useCallback((event: any, edge: any) => {
+  const onEdgeClick = useCallback((_: any, edge: any) => {
     if (onClickEdge) {
       onClickEdge(edge);
     }
   }, []);
+  const onNodeDragStop = useCallback((_: any, node: any) => {
+    const table = tables.find((table) => table.name === node.id);
+
+    if (table) {
+      table.position = node.position;
+    }
+  }, [tables]);
 
   return (
     <div style={{ width: `${width}px`, height: `${height}px` }}>
@@ -130,6 +100,7 @@ export default function Canvas({ tables, width, height, controls, onClickNode, o
         onEdgesChange={onEdgesChange}
         onEdgeClick={onEdgeClick}
         onConnect={onConnect}
+        onNodeDragStop={onNodeDragStop}
         fitView={false}
         proOptions={{
           hideAttribution: true,
