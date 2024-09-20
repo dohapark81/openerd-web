@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { create } from 'zustand'; // 수정된 부분
 import Canvas from '@/components/Canvas';
 import Drawer from '@/components/Drawer';
 import { Table } from '@/types/schema';
 import SchemaEditor from '@/components/SchemaEditor';
-
+import Button from '@/components/Button';
 
 const initialTables = [
   {
@@ -93,10 +94,78 @@ const initialTables = [
   }
 ] as Table[];
 
+// Zustand store 정의
+interface ERDState {
+  tables: Table[];
+  selectedTable: Table | null;
+  past: Table[][];
+  future: Table[][];
+  setSelectedTable: (table: Table | null) => void;
+  updateTable: (updatedTable: Table) => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: () => boolean;
+  canRedo: () => boolean;
+}
+
+const useERDStore = create<ERDState>()((set, get) => ({
+  tables: initialTables, // initialTables는 기존 코드에서 정의한 초기 테이블 데이터입니다.
+  selectedTable: null,
+  past: [],
+  future: [],
+
+  setSelectedTable: (table) => set({ selectedTable: table }),
+
+  updateTable: (updatedTable) => set((state) => {
+    const newTables = state.tables.map(table => 
+      table.name === updatedTable.name ? updatedTable : table
+    );
+    return {
+      tables: newTables,
+      selectedTable: updatedTable,
+      past: [...state.past, state.tables],
+      future: []
+    };
+  }),
+
+  undo: () => set((state) => {
+    if (state.past.length === 0) return state;
+    const previous = state.past[state.past.length - 1];
+    return {
+      tables: previous,
+      past: state.past.slice(0, -1),
+      future: [state.tables, ...state.future],
+      selectedTable: null
+    };
+  }),
+
+  redo: () => set((state) => {
+    if (state.future.length === 0) return state;
+    const next = state.future[0];
+    return {
+      tables: next,
+      past: [...state.past, state.tables],
+      future: state.future.slice(1),
+      selectedTable: null
+    };
+  }),
+
+  canUndo: () => get().past.length > 0,
+  canRedo: () => get().future.length > 0
+}));
+
 export default function EditorPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedTable, setSelectedTable] = useState<Table | null>(null);
-  const [tables, setTables] = useState<Table[]>(initialTables); // 초기 테이블 데이터
+  const { 
+    tables, 
+    selectedTable, 
+    setSelectedTable, 
+    updateTable, 
+    undo, 
+    redo,
+    canUndo,
+    canRedo
+  } = useERDStore();
 
   const handleClickNode = (table: Table) => {
     setIsDrawerOpen(true);
@@ -104,14 +173,7 @@ export default function EditorPage() {
   };
 
   function handleSchemaChange(updatedTable: Table): void {
-    setSelectedTable(updatedTable);
-    
-    // 전체 tables 배열 업데이트
-    setTables(prevTables => 
-      prevTables.map(table => 
-        table.name === updatedTable.name ? updatedTable : table
-      )
-    );
+    updateTable(updatedTable);
   }
 
   function handleClickEdge(edge: any) {
@@ -121,7 +183,19 @@ export default function EditorPage() {
   return (
     <div className="flex h-screen overflow-hidden">
       <div className="flex-grow">
-        <Canvas tables={tables} width={800} height={800} onClickNode={handleClickNode} onClickEdge={handleClickEdge} />
+        <Canvas 
+          tables={tables} 
+          width={800} 
+          height={800} 
+          onClickNode={handleClickNode} 
+          onClickEdge={handleClickEdge}
+          controls={
+            <>
+              <Button onClick={undo} disabled={!canUndo()}>Undo</Button>
+              <Button onClick={redo} disabled={!canRedo()}>Redo</Button>
+            </>
+          }
+        />
       </div>
 
       {selectedTable && 

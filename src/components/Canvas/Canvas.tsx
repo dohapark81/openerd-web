@@ -75,11 +75,12 @@ interface CanvasProps {
   tables: Table[];
   width: number;
   height: number;
+  controls?: React.ReactNode;
   onClickNode?: (table: Table) => void;
   onClickEdge?: (edge: any) => void;
 }
 
-export default function Canvas({ tables, width, height, onClickNode, onClickEdge }: CanvasProps) {
+export default function Canvas({ tables, width, height, controls, onClickNode, onClickEdge }: CanvasProps) {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
@@ -142,6 +143,7 @@ export default function Canvas({ tables, width, height, onClickNode, onClickEdge
           showInteractive={false}
           className="!shadow-none"
         >
+          {controls}
         </Controls>
         <MiniMap
           style={{
