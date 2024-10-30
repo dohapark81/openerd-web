@@ -1,7 +1,7 @@
 {
   "name": "openerd-web",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "start": "npm run dev",
@@ -25,6 +25,7 @@
     "hcl2-parser": "^1.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.3.0",
     "react-router-dom": "^6.26.1",
     "zustand": "^5.0.0-rc.2"
   },

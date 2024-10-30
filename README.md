@@ -1,50 +1,52 @@
-# React + TypeScript + Vite
+# OpenERD Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+OpenERD is a web-based database design tool. Use this tool to design your databases. 
+OpenERD serves as a tool that automates REST API creation using AI based on the designed schema information. 
+While not yet implemented, it will provide functionality to generate REST API source code directly from your ERD designs.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.js (>= 20.x)
+- npm (>= 10.x)
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/dohapark81/openerd-web.git
+   cd openerd-web
+   ```
 
-- Configure the top-level `parserOptions` property like this:
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Available Scripts
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- **Development Server:**
+  ```bash
+  npm run dev
+  ```
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+- **Production Build:**
+  ```bash
+  npm run build
+  ```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+- **Lint Check:**
+  ```bash
+  npm run lint
+  ```
+
+## Project Structure
+
+- `src/pages`: Source code page directory
+- `src/components`: Source code components directory
+- `public/`: Public assets directory
+- `tsconfig.json`: TypeScript configuration
+- `vite.config.ts`: Vite configuration
+
+## License
+
+OpenERD is licensed under the [GNU Affero General Public License v3.0](LICENSE)
