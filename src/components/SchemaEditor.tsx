@@ -5,6 +5,7 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { Table, Column } from '@/types/schema';
 import Button from '@/components/Button';
+import { FaTrash } from 'react-icons/fa';
 
 interface SchemaEditorProps {
   table: Table;
@@ -57,7 +58,9 @@ const SchemaEditor: React.FC<SchemaEditorProps> = ({
       headerName: '',
       width: 100,
       cellRenderer: (params: any) => (
-        <Button onClick={() => handleDelete(params.node.id)}>Delete</Button>
+          <Button onClick={() => handleDelete(params.node.id)}>
+            <FaTrash color="red" />
+          </Button>
       )
     }
   ];
