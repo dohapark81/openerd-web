@@ -15,18 +15,19 @@ interface SchemaEditorProps {
 const BooleanCellRenderer: React.FC<ICellRendererParams> = (props) => {
   const value = props.value === true || props.value === 'true';
   
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newValue = event.target.value === 'true';
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (props.setValue) {
-      props.setValue(newValue);
+      props.setValue(event.target.checked);
     }
   };
 
   return (
-    <select value={value.toString()} onChange={handleChange}>
-      <option value="true">True</option>
-      <option value="false">False</option>
-    </select>
+    <input
+      type="checkbox"
+      checked={value}
+      onChange={handleChange}
+      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+    />
   );
 };
 
