@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { create } from 'zustand';
 import Canvas from '@/components/Canvas';
 import Drawer from '@/components/Drawer';
@@ -8,6 +8,8 @@ import Button from '@/components/Button';
 import { Toolbar, ToolbarButton } from '@radix-ui/react-toolbar';
 import { MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, Menubar } from '@radix-ui/react-menubar';
 import { CursorArrowIcon, HandIcon, MagnifyingGlassIcon, Pencil1Icon, TableIcon } from '@radix-ui/react-icons';
+import RelationEditor from '@/components/RelationEditor';
+import { Edge } from '@xyflow/react';  // 상단에 추가
 
 const initialTables = [
   {
@@ -112,6 +114,9 @@ interface ERDState {
   canUndo: () => boolean;
   canRedo: () => boolean;
   addTable: (newTable: Table) => void;
+  selectedEdge: Edge | null;  // any 대신 Edge 타입 사용
+  setSelectedEdge: (edge: Edge | null) => void;
+  updateRelation: (updatedRelation: Edge) => void;
 }
 
 const useERDStore = create<ERDState>()((set, get) => ({
@@ -119,6 +124,7 @@ const useERDStore = create<ERDState>()((set, get) => ({
   selectedTable: null,
   past: [],
   future: [],
+  selectedEdge: null,
 
   setSelectedTable: (table) => set({ selectedTable: table }),
 
@@ -162,10 +168,46 @@ const useERDStore = create<ERDState>()((set, get) => ({
   addTable: (newTable: Table) => set((state) => ({
     tables: [...state.tables, newTable]
   })),
+
+  setSelectedEdge: (edge) => set({ selectedEdge: edge }),
+
+  updateRelation: (updatedRelation) => set((state) => {
+    // Update tables with the new relation
+    const newTables = state.tables.map(table => {
+      // Add logic to update relations in tables
+      return table;
+    });
+
+    return {
+      tables: newTables,
+      past: [...state.past, state.tables],
+      future: []
+    };
+  }),
 }));
 
 export default function EditorPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [containerSize, setContainerSize] = useState({ width: 800, height: 800 });
+  
+  useEffect(() => {
+    const updateSize = () => {
+      // 툴바 너비 56px, 패딩 8px
+      const toolbarWidth = 56 + 8;
+      // 메뉴바 높이 40px
+      const menubarHeight = 40;
+      
+      setContainerSize({
+        width: window.innerWidth - toolbarWidth,
+        height: window.innerHeight - menubarHeight
+      });
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
   const {
     tables,
     selectedTable,
@@ -175,7 +217,10 @@ export default function EditorPage() {
     undo,
     redo,
     canUndo,
-    canRedo
+    canRedo,
+    selectedEdge,
+    setSelectedEdge,
+    updateRelation,
   } = useERDStore();
 
   const handleClickNode = (table: Table) => {
@@ -188,8 +233,15 @@ export default function EditorPage() {
     updateTable(updatedTable);
   }
 
-  function handleClickEdge(edge: any) {
-    console.log('handleClickEdge()', edge);
+  function handleClickEdge(edge: Edge) {
+    console.log('handleClickEdge', edge);
+    setIsDrawerOpen(true);
+    setSelectedEdge(edge);
+  }
+
+  function handleRelationChange(updatedEdge: Edge): void {
+    console.log('handleRelationChange()', updatedEdge);
+    updateRelation(updatedEdge);  // updatedEdge를 직접 전달
   }
 
   function handleAddTable() {
@@ -257,27 +309,44 @@ export default function EditorPage() {
         <div className="flex-grow">
           <Canvas 
             tables={tables} 
-            width={800} 
-            height={800} 
+            width={containerSize.width} 
+            height={containerSize.height} 
             onClickNode={handleClickNode} 
             onClickEdge={handleClickEdge} 
             controls={<>
               <Button onClick={undo} disabled={!canUndo()}>Undo</Button>
               <Button onClick={redo} disabled={!canRedo()}>Redo</Button>
             </>}
+            selectedEdge={selectedEdge}
+            onEdgeSelect={setSelectedEdge}
           />
         </div>
       </div>
 
-      {selectedTable && (
+      {(selectedTable || selectedEdge) && (
         <Drawer 
-          title={<>
-            {selectedTable.logical_name} ({selectedTable.name})
-          </>} 
+          title={selectedTable ? 
+            <>{selectedTable.logical_name} ({selectedTable.name})</> :
+            <>Relation Editor</>
+          }
           isOpen={isDrawerOpen} 
-          onClose={() => setIsDrawerOpen(false)}
+          onClose={() => {
+            setIsDrawerOpen(false);
+            setSelectedTable(null);
+            setSelectedEdge(null);
+          }}
         >
-          <SchemaEditor table={selectedTable} onSchemaChange={handleSchemaChange} />
+          {selectedTable && (
+            <SchemaEditor table={selectedTable} onSchemaChange={handleSchemaChange} />
+          )}
+
+          {selectedEdge && (
+            <RelationEditor 
+              edge={selectedEdge}
+              tables={tables}
+              onUpdate={handleRelationChange}  // onRelationChange를 onUpdate로 변경
+            />
+          )}
         </Drawer>
       )}
     </div>

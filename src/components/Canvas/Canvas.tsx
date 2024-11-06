@@ -9,10 +9,13 @@ import {
   applyNodeChanges,
   addEdge,
   MarkerType,
+  Connection,
+  Edge,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import {Table} from "@/types/schema";
 import Node from '@/components/Node';
+import CustomEdge from './CustomEdge';
 
 const entityNodeStyle = {
   padding: 10,
@@ -21,18 +24,12 @@ const entityNodeStyle = {
   backgroundColor: '#000',
 };
 
-const initialEdges = [
-  {
-    id: 'e1-2',
-    source: 'users',
-    target: 'posts',
-    label: '1:N',
-    type: 'smoothstep',
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-    },
-  },
-];
+// 초기 edges 제거
+const initialEdges: Edge[] = [];
+
+const edgeTypes = {
+  custom: CustomEdge,
+};
 
 interface CanvasProps {
   tables: Table[];
@@ -41,11 +38,22 @@ interface CanvasProps {
   controls?: React.ReactNode;
   onClickNode?: (table: Table) => void;
   onClickEdge?: (edge: any) => void;
+  selectedEdge?: Edge | null;
+  onEdgeSelect?: (edge: Edge | null) => void;
 }
 
-export default function Canvas({ tables, width, height, controls, onClickNode, onClickEdge }: CanvasProps) {
-  const [nodes, setNodes] = useState<{ id: string; data: { label: JSX.Element }; position: { x: number; y: number }; style: { padding: number; border: string; borderRadius: string; backgroundColor: string } }[]>([]);
-  const [edges, setEdges] = useState(initialEdges);
+export default function Canvas({ 
+  tables, 
+  width, 
+  height, 
+  controls, 
+  onClickNode, 
+  onClickEdge,
+  selectedEdge,
+  onEdgeSelect 
+}: CanvasProps) {
+  const [nodes, setNodes] = useState<{ id: string; data: { label: JSX.Element; table: Table }; position: { x: number; y: number }; style: { padding: number; border: string; borderRadius: string; backgroundColor: string } }[]>([]);
+  const [edges, setEdges] = useState<Edge[]>(initialEdges);
 
   const handleClickNode = (table: Table) => {
     if (onClickNode) {
@@ -57,7 +65,8 @@ export default function Canvas({ tables, width, height, controls, onClickNode, o
     const newNodes = tables.map((table) => ({
       id: table.name,
       data: {
-        label: <Node table={table} onClick={handleClickNode} />
+        label: <Node table={table} onClick={handleClickNode} />,
+        table: table,
       },
       position: table.position,
       style: entityNodeStyle,
@@ -75,14 +84,44 @@ export default function Canvas({ tables, width, height, controls, onClickNode, o
     []
   );
   const onConnect = useCallback(
-    (changes: any) => setEdges((eds) => addEdge(changes, eds)),
+    (connection: Connection) => {
+      // ID 생성 방식 수정
+      const edgeId = `${Date.now()}-${connection.sourceHandle}-${connection.targetHandle}`;
+      
+      const newEdge: Edge = {
+        id: edgeId,
+        source: connection.source!,
+        target: connection.target!,
+        sourceHandle: connection.sourceHandle,
+        targetHandle: connection.targetHandle,
+        label: '1:N',
+        type: 'custom',
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+        },
+        data: {
+          sourceField: connection.sourceHandle?.split('__')[1],
+          targetField: connection.targetHandle?.split('__')[1],
+        },
+      };
+
+      setEdges((eds) => addEdge(newEdge, eds));
+    },
     []
   );
-  const onEdgeClick = useCallback((_: any, edge: any) => {
+  const onEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
+    console.log('Edge clicked:', edge);  // 디버깅을 위한 로그 추가
     if (onClickEdge) {
       onClickEdge(edge);
     }
+  }, [onClickEdge]);
+
+  const updateEdge = useCallback((updatedEdge: Edge) => {
+    setEdges(eds => eds.map(ed => 
+      ed.id === updatedEdge.id ? updatedEdge : ed
+    ));
   }, []);
+
   const onNodeDragStop = useCallback((_: any, node: any) => {
     const table = tables.find((table) => table.name === node.id);
 
@@ -102,8 +141,16 @@ export default function Canvas({ tables, width, height, controls, onClickNode, o
         onConnect={onConnect}
         onNodeDragStop={onNodeDragStop}
         fitView={false}
+        connectOnClick={false}
+        nodesDraggable={true}
+        nodesConnectable={true}
+        elementsSelectable={true}
         proOptions={{
           hideAttribution: true,
+        }}
+        edgeTypes={edgeTypes}
+        defaultEdgeOptions={{
+          type: 'custom',
         }}
       >
         <Controls
